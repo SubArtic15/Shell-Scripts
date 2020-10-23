@@ -5,7 +5,9 @@
 # set env variables
 CWD=$(pwd)
 MASTER_FILE=~/.cc_scripts
-SCRIPTS=("splitter.sh" "launch.sh" "container.sh")
+
+HOST=("splitter.sh" "launch.sh" "container.sh")
+GUEST=("splitter.sh")
 
 
 
@@ -49,32 +51,50 @@ function reset_cc_scripts {
   rm -f $MASTER_FILE
   touch $MASTER_FILE
 
-  echo "#!/bin/bash\n\n" >> $MASTER_FILE
+  printf "#!/bin/bash\n\n" >> $MASTER_FILE
 }
 
 
 # -------------------------------[ MAIN ]-------------------------------
-# modify ~/.bash_profile only if it has not been modified
-if grep -Fxq "source ~/.cc_scripts" ~/.bash_profile; then
-  echo
-else
-  echo "[SETUP]: modifying ~/.bash_profile to include new scripts"
-  echo "source ~/.cc_scripts" >> ~/.bash_profile
-fi
 
+function main {
+  if [ "$#" -ne 1 ]; then
+    echo "./setup.sh [HOST|GUEST]"
+    return
+  fi
 
-# manage previous compilations
-echo "[SETUP]: checking for existing scripts file..."
-if [[ -f "$MASTER_FILE" ]]; then
-  reset_cc_scripts
-fi
+  if [ "$1" == "HOST" ]; then
+    echo "HOST selected"
+    SCRIPTS=${HOST[@]}
+  elif [ "$1" == "GUEST" ]; then
+    echo "GUEST selected"
+    SCRIPTS=${GUEST[@]}
+  else
+    echo "./setup.sh [HOST|GUEST]"
+    return
+  fi
 
+  # modify ~/.bash_profile only if it has not been modified
+  if grep -Fxq "source ~/.cc_scripts" ~/.bash_profile; then
+    echo
+  else
+    echo "[SETUP]: modifying ~/.bash_profile to include new scripts"
+    echo "source ~/.cc_scripts" >> ~/.bash_profile
+  fi
 
-# loop through all scripts and add them, and their dependencies to ~/.bash_profile
-echo "[SETUP]: adding scripts..."
-for srpt in ${SCRIPTS[@]}; do
-  add_script $srpt
-done
-echo -e "[SETUP]: all scripts loaded!\n"
-source $MASTER_FILE
+  # manage previous compilations
+  echo "[SETUP]: checking for existing scripts file..."
+  if [[ -f "$MASTER_FILE" ]]; then
+    reset_cc_scripts
+  fi
+
+  # loop through all scripts and add them, and their dependencies to ~/.bash_profile
+  echo "[SETUP]: adding scripts..."
+  for srpt in ${SCRIPTS[@]}; do
+    add_script $srpt
+  done
+  echo -e "[SETUP]: all scripts loaded!\n"
+  source $MASTER_FILE
+}
 # -------------------------------[ MAIN ]-------------------------------
+main "$@"
