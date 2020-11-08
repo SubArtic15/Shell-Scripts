@@ -6,7 +6,7 @@
 
 
 if [ `pgrep docker | wc -l` -gt 1 ]; then
-  CONTAINER_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/back-end/" >/dev/null 2>&1 && pwd )"
+  BACK_END_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/back-end/" >/dev/null 2>&1 && pwd )"
 
 
   # display images in the format [REPO]  [TAG]   [IMAGE ID]
@@ -20,7 +20,7 @@ if [ `pgrep docker | wc -l` -gt 1 ]; then
     if [ `docker container ls | wc -l` -eq "1" ]; then
       printf "\033[1;31mNothing happened, because no container are running\033[0m\n"
     else
-      python3 $CONTAINER_DIR/container_list.py
+      python3 $BACK_END_DIR/container_list.py
     fi
 
 
@@ -36,11 +36,11 @@ if [ `pgrep docker | wc -l` -gt 1 ]; then
 
   # create N number of container of container type -i and image tag of -t
   elif [ "$1" == "create" ]; then
-    python3 $CONTAINER_DIR/container_create.py "${@:2:5}"
+    python3 $BACK_END_DIR/container_create.py "${@:2:5}"
 
   # destroy N number of containers of quantity --number or of name --name
   elif [ "$1" == "kill" ]; then
-    python3 $CONTAINER_DIR/container_kill.py "${@:2:5}"
+    python3 $BACK_END_DIR/container_kill.py "${@:2:5}"
 
 
   else
