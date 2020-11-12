@@ -1,64 +1,39 @@
 #!/bin/bash
+# :summary a shortcut system ot change directories
+# :project Shell Script (2020)
+
+BACK_END_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/back-end/" >/dev/null 2>&1 && pwd )"
+SCRIPT_PATH="$HOME/.launch_paths.json"
 
 
-LaunchCodes=("nsa" "captcha" "nau" "python" "webserver" "storm" "kapu" "freq" "c"
-             "cap" "cymod" "site" "gore" "git")
+# do config actions either add or remove variables
+if [ "$1" == "--add" ] || [ "$1" == "--remove" ]; then
+  python3 $BACK_END_DIR/launch_config.py "$BACK_END_DIR" "$@"
 
 
-command clear
-if [ "$1" == "nsa" ]; then
-  cd "/Users/CyrusLane/Documents/ProgrammingProjects/CAE-CO 2019" || return
+# display help menu
+elif [ "$1" == "--help" ] || [ "$1" == '-h' ] || [ "$#" -eq 0 ]; then
+  printf "\nUsage: launch [COMMAND]\n\nA favorites based directory system.\n"
+  printf "\nCommands:\n  [--add] [shortcut] [path]\t\tadd a new shortcut to system.\n"
+  printf "  [--remove] [shortcut]\t\tremoves an existing shortcut.\n"
+  printf "  [shortcut] change directory to path associated with a given shortcut.\n\n\n"
+  printf "EXISTING SHORTCUTS\n-----------------------------------------------\n"
 
-elif [ "$1" == "captcha" ] || [ "$1" == "cap" ]; then
-  cd "/Users/CyrusLane/Documents/ProgrammingProjects/Project Captcha" || return
+  while IFS='' read -r line; do
+    printf "\033[1;36mShorcut\033[0m: $line\n"
+    printf "\033[1;35mDescription\033[0m: $(jq ".$line.desc" -r $SCRIPT_PATH)\n"
+    printf "\033[1;32mPath\033[0m: $(jq ".$line.path" -r $SCRIPT_PATH)\n\n"
+  done < <(jq 'keys[]' $SCRIPT_PATH)
 
-elif [ "$1" == "nau" ]; then
-  cd "/Users/CyrusLane/Documents/NAU/FALL 2020" || return
 
-elif [ "$1" == "storm" ]; then
-  cd "/Users/CyrusLane/Documents/NAU/FALL 2019/CS 485" || return
+# check to see if a given key exists
+elif [ `jq ".$1" $SCRIPT_PATH | wc -l` -ne '4' ]; then
+  printf "\33[1;31mNo shortcut by the name of \033[0m '$1' \033[1;31m exists right now\033[0m\n"
 
-elif [ "$1" == "kapu" ]; then
-  cd "/Users/CyrusLane/Documents/ProgrammingProjects/Kapu Obfuscation" || return
 
-elif [ "$1" == "freq" ]; then
-  cd "/Users/CyrusLane/Documents/ProgrammingProjects/Frequency Hopper" || return
-
-elif [ "$1" == "python" ]; then
-
-  if [ "$2" == "site-packages" ]; then
-    cd "/usr/local/lib/python3.8/site-packages" || return
-  else
-     cd "/Users/CyrusLane/Documents/ProgrammingProjects/Simple Python Programs" || return
-  fi
-
-elif [ "$1" == "c" ] || [ "$1" == "C" ]; then
-  cd "/Users/CyrusLane/Documents/ProgrammingProjects/Small C Programs" || return
-
-elif [ "$1" == "hub" ]; then
-  cd "/Users/CyrusLane/Documents/ProgrammingProjects" || return
-  command ls -G
-
-elif [ "$1" == "webserver" ]; then
-  cd "$HOME" || return
-  command ./StartServer
-
-elif [ "$1" == "site" ]; then
-  cd "/Users/CyrusLane/Documents/ProgrammingProjects/Personal-Website" || return
-
-elif [ "$1" == "cymod" ] || [ "$1" == "mod" ]; then
-  cd "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/cymod" || return
-
-elif [ "$1" == "gore" ]; then
-  cd "/Users/CyrusLane/Documents/Gore Internship" || return
-
-elif [ "$1" == "git" ]; then
-  cd "/Users/CyrusLane/Documents/ProgrammingProjects/GitRepositories" || return
-
-else
-  echo "< INPUT_ERROR >"
-  for tag in "${LaunchCodes[@]}"
-  do
-    echo "- launch $tag"
-  done
+# given that the provided shorcut exists then go to it
+elif [ "$#" -eq 1 ]; then
+  new_path=`jq ".$1.path" -r $SCRIPT_PATH`
+  cd "$new_path"
+  clear
 fi

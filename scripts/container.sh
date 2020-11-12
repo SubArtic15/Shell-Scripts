@@ -1,8 +1,6 @@
 #!/bin/bash
 # :summary abstraction of native docker commands
 # :project Shell Script (2020)
-# :author SubArtic15
-# :website https://github.com/SubArtic15/Shell-Scripts
 
 
 if [ `pgrep docker | wc -l` -gt 1 ]; then

@@ -1,10 +1,12 @@
 #!/bin/bash
-
+# :summary abstraction of native docker commands
+# :project Shell Script (2020)
 
 
 # set env variables
 CWD=$(pwd)
 MASTER_FILE=~/.cc_scripts
+SCRIPT_FILE="$HOME/.launch_paths.json"
 
 HOST=("splitter.sh" "launch.sh" "container.sh")
 GUEST=("splitter.sh")
@@ -86,6 +88,9 @@ function main {
   echo "[SETUP]: checking for existing scripts file..."
   if [[ -f "$MASTER_FILE" ]]; then
     reset_cc_scripts
+  fi
+  if [[ -f "$SCRIPT_FILE" ]]; then
+    touch $SCRIPT_FILE
   fi
 
   # loop through all scripts and add them, and their dependencies to ~/.bash_profile

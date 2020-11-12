@@ -2,7 +2,7 @@
 :summary abstraction and management of JSON dictionary relationship
 :project Shell-Scripts/
 """
-from os import path
+from os import path, getenv
 
 
 class LaunchOption:
@@ -57,7 +57,7 @@ if __name__ == "__main__":
         return output
 
     def create_object():
-        p = "/Users/CyrusLane/Documents/ProgrammingProjects/Project Captcha"
+        p = getenv('HOME')
         s = random_string(ascii_lowercase, 10)
         d = random_string(ascii_lowercase, 80)
         return LaunchOption(s, p, d)

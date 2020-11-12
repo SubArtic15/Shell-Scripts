@@ -1,7 +1,10 @@
 """
-
+:summary file used to create and manage shortcuts and JSON file associated with
+         launch shortcut/command.
+:project Shell Script (2020)
 """
 from json import load, dumps
+from os import getenv
 from sys import argv
 
 from launch_library import LaunchOption
@@ -35,8 +38,10 @@ if __name__ == '__main__':
     back_end_dir = argv[1]
     action, *terms = argv[2:]
 
+    PATHS_DIR = getenv('HOME') + '/.launch_paths.json'
+
     # get the paths
-    with open(back_end_dir + "/launch_paths.json", "r") as data_file:
+    with open(PATHS_DIR, "r") as data_file:
         json_file = load(data_file)
     object_array = transform_json_to_obj(json_file)
 
@@ -53,6 +58,6 @@ if __name__ == '__main__':
                 object_array.remove(obj)
 
     output_json = transform_obj_to_json(object_array)
-    with open(back_end_dir + "/launch_paths.json", "w") as data_file:
+    with open(PATHS_DIR, "w") as data_file:
         json_file = dumps(output_json, indent=4, sort_keys=True)
         data_file.write(json_file)

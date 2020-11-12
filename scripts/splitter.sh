@@ -1,4 +1,6 @@
 #!/bin/bash
+# :summary a command used to split a file into smaller chunks
+# :project Shell Script (2020)
 
 if [ "$#" -le 1 ] || [ "$#" -gt 3 ] ; then
   printf "Invalid Args\n\tfile_name: file to be split\n\tfile_prefix: prefix of new files.\n\tlength: length of split files(default=10000)\n\n"

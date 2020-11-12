@@ -1,8 +1,6 @@
 """
 :summary abstraction to a better version of 'docker containers ls --format...'
 :project Shell Script (2020)
-:author SubArtic15
-:website https://github.com/SubArtic15/Shell-Scripts
 """
 from subprocess import check_output
 

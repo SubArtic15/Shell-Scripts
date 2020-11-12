@@ -1,8 +1,6 @@
 """
 :summary abstraction to a better version of 'docker container stop [CONTAINER_NAME]'
 :project Shell Script (2020)
-:author SubArtic15
-:website https://github.com/SubArtic15/Shell-Scripts
 """
 from argparse import ArgumentParser
 from subprocess import check_output
