@@ -3,7 +3,7 @@
 # :project Shell Script (2020)
 
 
-if [ `pgrep docker | wc -l` -gt 1 ]; then
+if [ `pgrep docker | wc -l` -ge 1 ]; then
   BACK_END_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/back-end/" >/dev/null 2>&1 && pwd )"
 
 
@@ -42,7 +42,7 @@ if [ `pgrep docker | wc -l` -gt 1 ]; then
 
 
   else
-    if [ `pgrep docker | wc -l` -eq "0" ]; then
+    if [ `pgrep docker | wc -l` -eq 0 ]; then
       printf "\033[1;31mNothing happened, because docker is not running\033[0m\n"
     fi
 

@@ -2,53 +2,45 @@
 :summary abstraction to a better version of 'docker run --rm -dt [IMAGE]:[TAG]'
 :project Shell Script (2020)
 """
+from os import system
 from argparse import ArgumentParser
-from collections import defaultdict
-from subprocess import check_output
 
-
-
-
-def command(cmd_to_run):
-    """run linux terminal command and capture output"""
-    if isinstance(cmd_to_run, list):
-        final_command = cmd_to_run
-    elif isinstance(cmd_to_run, str):
-        final_command = cmd_to_run.split(' ')
-    else:
-        raise ValueError("The input for function :: command must be a [list, str]")
-    return check_output(final_command).decode()
-
+from container_library import get_image_information
 
 
 
 
 
 if __name__ == '__main__':
-    docker_images_command = "docker images --format {{.Repository}}:{{.Tag}}"
-    docker_images_output = command(docker_images_command).split('\n')[:-1]
-    image_dict = defaultdict(list)
-    for image_combo in docker_images_output:
-        image, tag = image_combo.split(":")
-        image_dict[image].append(tag)
+    # get metadata about docker images
+    image_dict = get_image_information()
+    images = list(image_dict.keys())
+    image_tags = list(image_dict.values())
 
+    # set up and parse command line arguments
     parser = ArgumentParser()
-    parser.add_argument('-c', '--count', action='store', dest='num_containers', type=int,
-                        default=1,
+    parser.add_argument('-c', '--count', dest='num_containers',
+                        type=int, default=1,
                         help='determines number of containers to create')
-    parser.add_argument('-i', '--image', action='store', dest='image', type=str,
+    parser.add_argument('-i', '--image', dest='image',
                         default="ubuntu",
-                        help=f"Choose the image type from: {list(image_dict.keys())}")
-    parser.add_argument('-t', '--tag', action='store', dest='tag', type=str,
+                        help=f"Choose the image type from: {images}")
+    parser.add_argument('-t', '--tag', dest='tag',
                         default="latest",
-                        help=f"Choose the tag type from: {list(image_dict.values())}")
+                        help=f"Choose the tag type from: {image_tags}")
 
+    # abstract arguments out ot parser namespace
     args = parser.parse_args()
+    num_containers = args.num_containers
+    container_image = args.image
+    container_tag = args.tag
 
-    if not args.image in image_dict.keys() and not args.tag in image_dict[args.image]:
-        print("Invalid --image and or --tag")
+    # check for validity in arguments
+    if (container_image not in images) or (container_tag not in image_dict[container_image]):
+        print("Invalid --image and/or --tag")
+
+    # create some number of containers based off of the valididated parameters
     else:
-        print(f"Creating (x{args.num_containers}) {args.image}:{args.tag} container(s)...")
+        print(f"Creating (x{num_containers}) {container_image}:{container_tag} container(s)...")
         for _ in range(args.num_containers):
-            if args.image in image_dict.keys() and args.tag in image_dict[args.image]:
-                command(f"docker run --rm -dt {args.image}:{args.tag}")
+            system(f"docker run --rm -dt {args.image}:{args.tag}")

@@ -2,19 +2,10 @@
 :summary abstraction to a better version of 'docker containers ls --format...'
 :project Shell Script (2020)
 """
-from subprocess import check_output
+from container_library import command
 
 
 
-def command(cmd_to_run):
-    """run linux terminal command and capture output"""
-    if isinstance(cmd_to_run, list):
-        final_command = cmd_to_run
-    elif isinstance(cmd_to_run, str):
-        final_command = cmd_to_run.split(' ')
-    else:
-        raise ValueError("The input for function :: command must be a [list, str]")
-    return check_output(final_command).decode()
 
 
 def container_ip(cname):
@@ -24,7 +15,6 @@ def container_ip(cname):
                                 cname]
     raw_container_ip_output = command(raw_container_ip_command).split('\n')[0]
     return raw_container_ip_output
-
 
 
 if __name__ == '__main__':
